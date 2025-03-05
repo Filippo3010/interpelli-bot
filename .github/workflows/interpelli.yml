@@ -2,7 +2,7 @@ name: Controllo Interpelli ITIS Galilei
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Esegue lo script ogni 5 minuti
+    - cron: '*/10 * * * *'  # Esegue lo script ogni 5 minuti
   workflow_dispatch:  # Permette di avviarlo manualmente
 
 jobs:
