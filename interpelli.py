@@ -79,3 +79,5 @@ while True:
             send_email(interpellis)
 
         previous_hash = current_hash
+        # Modifica di test per attivare il workflow
+
