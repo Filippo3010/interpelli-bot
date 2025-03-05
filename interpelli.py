@@ -72,6 +72,8 @@ while True:
 
     if current_hash != previous_hash:
         interpellis = get_interpellis()
+# Test modifica per avviare il workflow
+
 
         if interpellis:
             send_email(interpellis)
