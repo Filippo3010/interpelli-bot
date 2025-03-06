@@ -112,3 +112,4 @@ else:
     print("❌ Nessun interpello trovato.")
 
 print("✅ Script completato con successo!")
+
