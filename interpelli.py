@@ -44,6 +44,6 @@ for title, link in interpellis:
 
 
 interpellis = get_interpellis()
-send_email(interpellis)
+send_email(interpellis,body)
 
 print("✅ Script completato con successo!")
