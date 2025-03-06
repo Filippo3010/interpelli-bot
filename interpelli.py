@@ -1,4 +1,3 @@
-import time
 import hashlib
 import requests
 import smtplib
@@ -24,17 +23,18 @@ print("🔹 Script avviato...")
 # Funzione per ottenere gli interpelli con link
 def get_interpellis():
     print("🔹 Scaricamento della pagina...")
-    response = requests.get(url)
-    
-    if response.status_code != 200:
-        print(f"❌ Errore: impossibile scaricare la pagina, status code {response.status_code}")
+    try:
+        response = requests.get(url, timeout=15)  # Timeout di 15 secondi
+        response.raise_for_status()  # Genera errore se il sito non risponde
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Errore durante il download: {e}")
         return []
-    
+
     print("🔹 Pagina scaricata con successo!")
     soup = BeautifulSoup(response.text, 'html.parser')
 
     interpellis = []
-    for item in soup.find_all('a', href=True):  # Prende solo i link
+    for item in soup.find_all('a', href=True):
         text = item.get_text(strip=True)
         link = item['href']
         if "interpello" in text.lower() and istituto_target.lower() in text.lower():
@@ -50,10 +50,14 @@ def get_page_hash():
 
 # Funzione per inviare una email di notifica
 def send_email(new_interpellis):
+    if not new_interpellis:
+        print("🔹 Nessun interpello trovato, nessuna email inviata.")
+        return
+    
     print("🔹 Invio email di notifica...")
     subject = f"Nuovo interpello per {istituto_target}"
-    
     body = "Sono stati pubblicati nuovi interpelli:\n\n"
+
     for title, link in new_interpellis:
         full_link = url if "http" not in link else link  # Corregge link relativi
         body += f"- {title}\n  {full_link}\n\n"
@@ -65,7 +69,7 @@ def send_email(new_interpellis):
     msg.attach(MIMEText(body, "plain"))
 
     try:
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
         server.starttls()
         server.login(EMAIL_SENDER, EMAIL_PASSWORD)
         server.sendmail(EMAIL_SENDER, EMAIL_RECEIVER, msg.as_string())
@@ -74,21 +78,9 @@ def send_email(new_interpellis):
     except Exception as e:
         print(f"❌ Errore nell'invio dell'email: {e}")
 
-# Ottieni l'hash iniziale della pagina
-previous_hash = get_page_hash()
+# Esegue un solo controllo e termina
+print("🔹 Controllo aggiornamenti...")
+interpellis = get_interpellis()
+send_email(interpellis)
 
-print("🔹 Monitoraggio avviato...")
-
-# Monitora la pagina a intervalli regolari
-while True:
-    time.sleep(10)  # Proviamo con un intervallo breve per il debug
-    print("🔹 Controllo aggiornamenti...")
-    current_hash = get_page_hash()
-
-    if current_hash != previous_hash:
-        interpellis = get_interpellis()
-        
-        if interpellis:
-            send_email(interpellis)
-        
-        previous_hash = current_hash
+print("✅ Script completato con successo!")
