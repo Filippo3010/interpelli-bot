@@ -13,6 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Restore last hash (cache)
+        uses: actions/cache@v3
+        with:
+          path: last_hash.txt
+          key: interpelli-hash
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -26,3 +32,8 @@ jobs:
         env:
           EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+
+      - name: Save last hash (cache update)
+        if: success()
+        run: cp last_hash.txt ${{ runner.temp }}/last_hash.txt
+
