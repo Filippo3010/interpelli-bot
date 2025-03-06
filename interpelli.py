@@ -45,7 +45,7 @@ def get_interpellis():
 
 # Funzione per calcolare l'hash degli interpelli
 def get_page_hash():
-    interpellis = get_interpellis()
+    interpellis = [("Finto Interpello - TEST", "https://www.ustli.it/test-link")] + get_interpellis()
     return hashlib.md5("".join([i[0] for i in interpellis]).encode('utf-8')).hexdigest()
 
 # Funzione per inviare una email di notifica
