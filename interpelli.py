@@ -2,9 +2,9 @@ import smtplib
 from email.mime.text import MIMEText
 
 # Configura l'email
-SENDER_EMAIL = "tuoemail@gmail.com"  # 🔹 Usa il tuo indirizzo Gmail
+SENDER_EMAIL = os.getenv("EMAIL_SENDER")  # 🔹 Usa il tuo indirizzo Gmail
 RECEIVER_EMAIL = "filippo.freschi30@gmail.com"
-PASSWORD = "TUA_PASSWORD"  # 🔹 Usa la password per app di Google
+PASSWORD = os.getenv("EMAIL_PASSWORD")  # 🔹 Usa la password per app di Google
 
 def get_interpellis():
     """Simula l'estrazione degli interpelli dal sito."""
