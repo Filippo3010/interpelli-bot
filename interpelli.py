@@ -1,6 +1,11 @@
 import smtplib
 from email.mime.text import MIMEText
 
+# Configura l'email
+SENDER_EMAIL = "tuoemail@gmail.com"  # 🔹 Usa il tuo indirizzo Gmail
+RECEIVER_EMAIL = "filippo.freschi30@gmail.com"
+PASSWORD = "TUA_PASSWORD"  # 🔹 Usa la password per app di Google
+
 def get_interpellis():
     """Simula l'estrazione degli interpelli dal sito."""
     return [
@@ -10,35 +15,32 @@ def get_interpellis():
 
 def send_email(subject, body):
     """Invia un'email con il nuovo interpello trovato."""
-    sender_email = "tuoemail@gmail.com"
-    receiver_email = "filippo.freschi30@gmail.com"
-    password = "TUA_PASSWORD"
-
     msg = MIMEText(body)
     msg["Subject"] = subject
-    msg["From"] = sender_email
-    msg["To"] = receiver_email
+    msg["From"] = SENDER_EMAIL
+    msg["To"] = RECEIVER_EMAIL
 
     try:
         server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-        server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, msg.as_string())
+        server.login(SENDER_EMAIL, PASSWORD)
+        server.sendmail(SENDER_EMAIL, RECEIVER_EMAIL, msg.as_string())
         server.quit()
-        print("✅ Email inviata con successo!")
+        print(f"✅ Email inviata con successo: {subject}")
     except Exception as e:
         print(f"❌ Errore nell'invio email: {e}")
 
-# ✅ Aggiungiamo un interpello finto per testare la notifica
+# 🔹 Aggiungiamo un interpello finto per test
 test_interpello = [("Finto Interpello - TEST", "https://www.ustli.it/test-link")]
 
-# 📌 Uniamo il test con gli interpelli veri
+# 🔹 Recuperiamo gli interpelli reali e uniamo il test
 interpellis = test_interpello + get_interpellis()
 
-# 📩 Invia email per ogni interpello trovato
+# 🔹 Invia un'email per ogni interpello trovato
 for title, link in interpellis:
     subject = f"Nuovo interpello: {title}"
     body = f"È stato pubblicato un nuovo interpello:\n{title}\nLink: {link}"
-    send_email(subject, body)
+    send_email(subject, body)  # ✅ Adesso passiamo i due parametri correttamente!
+
 
 interpellis = get_interpellis()
 send_email(interpellis)
