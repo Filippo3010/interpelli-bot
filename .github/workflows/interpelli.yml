@@ -11,6 +11,10 @@ jobs:
   check_interpelli:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write  # Permette al bot di fare commit e push
+      actions: read  # Permette al bot di leggere le azioni
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -45,4 +49,4 @@ jobs:
           git commit -m "Update last_hash.txt"
           git push
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Usa il GITHUB_TOKEN con permessi di scrittura
