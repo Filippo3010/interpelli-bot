@@ -24,20 +24,25 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Download last hash
-        uses: actions/download-artifact@v2
-        with:
-          name: last_hash
-          path: ./  # Salva l'artifact nella directory corrente
-
-      - name: Run script
-        run: python interpelli.py
+      - name: Check and update last hash
+        run: |
+          if [ -f last_hash.txt ]; then
+            echo "Last hash file found."
+          else
+            echo "Creating new last_hash.txt file."
+            echo "" > last_hash.txt  # Crea il file vuoto se non esiste
+          fi
+          python interpelli.py
         env:
           EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
 
-      - name: Upload new hash
-        uses: actions/upload-artifact@v2
-        with:
-          name: last_hash
-          path: ./last_hash.txt
+      - name: Commit and push changes
+        run: |
+          git config --global user.email "your-email@example.com"
+          git config --global user.name "GitHub Actions"
+          git add last_hash.txt
+          git commit -m "Update last_hash.txt"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
