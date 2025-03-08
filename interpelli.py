@@ -54,6 +54,7 @@ def get_interpellis():
 def get_page_hash(interpellis):
     """Calcola un hash basato sugli interpelli trovati (titolo + link)."""
     hash_content = "".join([title + link for title, link in interpellis])
+    print(f"🔹 Contenuto dell'hash (prima parte): {hash_content[:100]}...")  # Aggiunto log per il contenuto dell'hash
     return hashlib.sha256(hash_content.encode('utf-8')).hexdigest()
 
 def read_last_hash():
@@ -61,8 +62,9 @@ def read_last_hash():
     if os.path.exists(HASH_FILE):
         with open(HASH_FILE, "r") as f:
             last_hash = f.read().strip()
-            print(f"🔹 Ultimo hash salvato: {last_hash}")
+            print(f"🔹 Ultimo hash salvato: {last_hash}")  # Aggiunto log per verificare l'hash
             return last_hash
+    print("🔹 Nessun hash trovato, è la prima esecuzione.")
     return ""
 
 def save_current_hash(current_hash):
