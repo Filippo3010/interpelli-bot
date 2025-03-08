@@ -63,7 +63,7 @@ def read_last_hash():
             last_hash = f.read().strip()
             print(f"🔹 Ultimo hash salvato: {last_hash}")
             return last_hash
-    return ""
+    return ""  # Se non c'è un file esistente, ritorna una stringa vuota.
 
 def save_current_hash(current_hash):
     """Salva l'hash attuale per il prossimo controllo."""
