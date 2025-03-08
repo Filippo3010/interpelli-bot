@@ -25,9 +25,9 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Download last hash
-        uses: actions/download-artifact@v2  # Cambiato a v2
+        uses: actions/download-artifact@v2
         with:
-          name: last_hash.txt
+          name: last_hash
           path: ./  # Salva l'artifact nella directory corrente
 
       - name: Run script
@@ -37,7 +37,7 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
 
       - name: Upload new hash
-        uses: actions/upload-artifact@v2  # Cambiato a v2
+        uses: actions/upload-artifact@v2
         with:
-          name: last_hash.txt
+          name: last_hash
           path: ./last_hash.txt
