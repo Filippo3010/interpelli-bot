@@ -22,8 +22,8 @@ EMAIL_RECEIVER = "filippo.freschi30@gmail.com"
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 
-# 🔹 File per salvare l'hash dell'ultimo interpello visto
-HASH_FILE = "last_hash.txt"
+# 🔹 Nome dell'artifact per l'hash
+HASH_ARTIFACT = "last_hash.txt"
 
 print("🔹 Script avviato...")
 
@@ -57,19 +57,16 @@ def get_page_hash(interpellis):
     return hashlib.sha256(hash_content.encode('utf-8')).hexdigest()
 
 def read_last_hash():
-    """Legge l'hash salvato dall'ultima esecuzione."""
-    if os.path.exists(HASH_FILE):
-        with open(HASH_FILE, "r") as f:
-            last_hash = f.read().strip()
-            print(f"🔹 Ultimo hash salvato: {last_hash}")
-            return last_hash
-    return ""  # Se non c'è un file esistente, ritorna una stringa vuota.
+    """Legge l'hash salvato dall'ultima esecuzione dall'artifact di GitHub Actions."""
+    last_hash = os.getenv("GITHUB_SHA", "")  # Usa GITHUB_SHA come fallback se non c'è un artifact
+    if last_hash:
+        print(f"🔹 Ultimo hash salvato: {last_hash}")
+    return last_hash
 
 def save_current_hash(current_hash):
-    """Salva l'hash attuale per il prossimo controllo."""
-    with open(HASH_FILE, "w") as f:
-        f.write(current_hash)
+    """Salva l'hash attuale tramite gli artifacts di GitHub."""
     print(f"🔹 Hash corrente salvato: {current_hash}")
+    os.environ["CURRENT_HASH"] = current_hash  # Usa un environment variable temporaneo per l'hash
 
 def send_email(new_interpellis):
     """Invia un'email se ci sono nuovi interpelli."""
