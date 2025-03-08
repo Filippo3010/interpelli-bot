@@ -24,11 +24,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Download last_hash.txt artifact (se esiste)
+      - name: Download last hash
         uses: actions/download-artifact@v3
         with:
-          name: last_hash
-          path: ./  # Salva l'artefatto nella cartella corrente
+          name: last_hash_artifact
+          path: .
 
       - name: Run script
         run: python interpelli.py
@@ -36,9 +36,10 @@ jobs:
           EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
 
-      - name: Save last_hash.txt as artifact
-        if: success()  # Solo se lo script è stato eseguito correttamente
+      - name: Upload last hash
+        if: success()
         uses: actions/upload-artifact@v3
         with:
-          name: last_hash
+          name: last_hash_artifact
           path: last_hash.txt
+
