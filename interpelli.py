@@ -54,7 +54,6 @@ def get_interpellis():
 def get_page_hash(interpellis):
     """Calcola un hash basato sugli interpelli trovati (titolo + link)."""
     hash_content = "".join([title + link for title, link in interpellis])
-    print(f"🔹 Contenuto per hash: {hash_content}")  # Debug
     return hashlib.sha256(hash_content.encode('utf-8')).hexdigest()
 
 def read_last_hash():
@@ -62,7 +61,7 @@ def read_last_hash():
     if os.path.exists(HASH_FILE):
         with open(HASH_FILE, "r") as f:
             last_hash = f.read().strip()
-            print(f"🔹 Ultimo hash salvato: {last_hash}")  # Debug
+            print(f"🔹 Ultimo hash salvato: {last_hash}")
             return last_hash
     return ""
 
@@ -70,7 +69,7 @@ def save_current_hash(current_hash):
     """Salva l'hash attuale per il prossimo controllo."""
     with open(HASH_FILE, "w") as f:
         f.write(current_hash)
-    print(f"🔹 Hash corrente salvato: {current_hash}")  # Debug
+    print(f"🔹 Hash corrente salvato: {current_hash}")
 
 def send_email(new_interpellis):
     """Invia un'email se ci sono nuovi interpelli."""
