@@ -53,8 +53,10 @@ def get_interpellis():
 
 def get_page_hash(interpellis):
     """Calcola un hash basato sugli interpelli trovati (titolo + link)."""
+    if not interpellis:
+        return ""
+    
     hash_content = "".join([title + link for title, link in interpellis])
-    print(f"🔹 Contenuto dell'hash (prima parte): {hash_content[:100]}...")  # Aggiunto log per il contenuto dell'hash
     return hashlib.sha256(hash_content.encode('utf-8')).hexdigest()
 
 def read_last_hash():
@@ -62,10 +64,9 @@ def read_last_hash():
     if os.path.exists(HASH_FILE):
         with open(HASH_FILE, "r") as f:
             last_hash = f.read().strip()
-            print(f"🔹 Ultimo hash salvato: {last_hash}")  # Aggiunto log per verificare l'hash
+            print(f"🔹 Ultimo hash salvato: {last_hash}")
             return last_hash
-    print("🔹 Nessun hash trovato, è la prima esecuzione.")
-    return ""
+    return None  # Restituisce None se il file non esiste o è vuoto
 
 def save_current_hash(current_hash):
     """Salva l'hash attuale per il prossimo controllo."""
@@ -110,13 +111,14 @@ if interpellis:
     current_hash = get_page_hash(interpellis)
     last_hash = read_last_hash()
 
-    if current_hash != last_hash:
+    if current_hash != last_hash:  # Confronta l'hash attuale con quello precedente
         print("🔹 Nuovo interpello rilevato!")
         send_email(interpellis)
-        save_current_hash(current_hash)
+        save_current_hash(current_hash)  # Salva l'hash aggiornato
     else:
         print("🔹 Nessun nuovo interpello, nessuna azione necessaria.")
 else:
     print("❌ Nessun interpello trovato.")
 
 print("✅ Script completato con successo!")
+
