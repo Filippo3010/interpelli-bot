@@ -60,13 +60,16 @@ def read_last_hash():
     """Legge l'hash salvato dall'ultima esecuzione."""
     if os.path.exists(HASH_FILE):
         with open(HASH_FILE, "r") as f:
-            return f.read().strip()
+            last_hash = f.read().strip()
+            print(f"🔹 Ultimo hash salvato: {last_hash}")
+            return last_hash
     return ""
 
 def save_current_hash(current_hash):
     """Salva l'hash attuale per il prossimo controllo."""
     with open(HASH_FILE, "w") as f:
         f.write(current_hash)
+    print(f"🔹 Hash corrente salvato: {current_hash}")
 
 def send_email(new_interpellis):
     """Invia un'email se ci sono nuovi interpelli."""
