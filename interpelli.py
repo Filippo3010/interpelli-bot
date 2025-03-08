@@ -5,18 +5,20 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 
-# URL della pagina da monitorare
+# 🔹 URL della pagina da monitorare
 URL = 'https://www.ustli.it/usp_livorno/index.php/docenti/interpelli'
 
-# Nome dell'istituto da monitorare
+# 🔹 Nome dell'istituto da monitorare
 ISTITUTO_TARGET = "ITIS Galilei di Livorno"
 
-# Configurazione Email (da GitHub Secrets)
+# 🔹 Configurazione Email (da GitHub Secrets)
 EMAIL_SENDER = os.getenv("EMAIL_SENDER")  
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")  
 EMAIL_RECEIVER = "filippo.freschi30@gmail.com"
 
+# 🔹 Server SMTP
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
 
@@ -41,17 +43,18 @@ def get_interpellis():
     interpellis = []
     for item in soup.find_all('a', href=True):
         text = item.get_text(strip=True)
-        link = item['href']
+        link = urljoin(URL, item['href'])  # Risolve i link relativi
+
         if "interpello" in text.lower() and ISTITUTO_TARGET.lower() in text.lower():
-            full_link = link if "http" in link else URL
-            interpellis.append((text, full_link))
+            interpellis.append((text, link))
 
     print(f"🔹 Trovati {len(interpellis)} interpelli per {ISTITUTO_TARGET}")
     return interpellis
 
 def get_page_hash(interpellis):
-    """Calcola un hash basato sugli interpelli trovati."""
-    return hashlib.md5("".join([i[0] for i in interpellis]).encode('utf-8')).hexdigest()
+    """Calcola un hash basato sugli interpelli trovati (titolo + link)."""
+    hash_content = "".join([title + link for title, link in interpellis])
+    return hashlib.sha256(hash_content.encode('utf-8')).hexdigest()
 
 def read_last_hash():
     """Legge l'hash salvato dall'ultima esecuzione."""
@@ -85,11 +88,11 @@ def send_email(new_interpellis):
     msg.attach(MIMEText(body, "plain"))
 
     try:
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
-        server.starttls()
-        server.login(EMAIL_SENDER, EMAIL_PASSWORD)
-        server.sendmail(EMAIL_SENDER, EMAIL_RECEIVER, msg.as_string())
-        server.quit()
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10) as server:
+            server.starttls()
+            server.login(EMAIL_SENDER, EMAIL_PASSWORD)
+            server.sendmail(EMAIL_SENDER, EMAIL_RECEIVER, msg.as_string())
+        
         print("✅ Email inviata con successo!")
     except Exception as e:
         print(f"❌ Errore nell'invio dell'email: {e}")
@@ -112,4 +115,3 @@ else:
     print("❌ Nessun interpello trovato.")
 
 print("✅ Script completato con successo!")
-
