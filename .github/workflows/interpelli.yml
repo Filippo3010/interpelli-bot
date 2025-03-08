@@ -4,6 +4,8 @@ on:
   schedule:
     - cron: '*/5 * * * *'  # Esegue lo script ogni 5 minuti
   workflow_dispatch:  # Permette di avviarlo manualmente
+  repository_dispatch:  # Permette di avviarlo tramite ping esterno
+    types: [manual_trigger]
 
 jobs:
   check_interpelli:
@@ -14,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Restore last hash (cache)
+        id: cache-hash
         uses: actions/cache@v3
         with:
           path: last_hash.txt
@@ -23,9 +26,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
+          cache: 'pip'  # Cache dei pacchetti Python
 
       - name: Install dependencies
-        run: pip install requests beautifulsoup4
+        run: pip install -r requirements.txt
 
       - name: Run script
         run: python interpelli.py
