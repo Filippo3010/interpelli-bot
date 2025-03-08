@@ -24,22 +24,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Download last hash
-        uses: actions/download-artifact@v3
-        with:
-          name: last_hash_artifact
-          path: .
-
       - name: Run script
         run: python interpelli.py
         env:
           EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-
-      - name: Upload last hash
-        if: success()
-        uses: actions/upload-artifact@v3
-        with:
-          name: last_hash_artifact
-          path: last_hash.txt
-
